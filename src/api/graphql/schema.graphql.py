@@ -1,10 +1,11 @@
 from ariadne import gql, QueryType, make_executable_schema
 from .graphql_tools import build_type_query, convert_table_to_schema
+from src import models
 
 type_defs = gql(f"""
-    {build_type_query()}
+    {build_type_query(models)}
 
-    {convert_table_to_schema()}
+    {convert_table_to_schema(models)}
 """)
 
 query = QueryType()

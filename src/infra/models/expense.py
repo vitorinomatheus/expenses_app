@@ -13,9 +13,3 @@ class Expense(Base):
     cat_social = mapped_column(ForeignKey("CategorySocial.id"))
     cat_expense_feel = mapped_column(ForeignKey("CategoryExpenseFeel.id"))
     cat_budget_impact = mapped_column(ForeignKey("CategoryBudgetImpact.id"))
-
-    def graphql_schema() -> str:
-        return """
-        
-        """
-        pass

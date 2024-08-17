@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from flask import config
+from flask import config, g
 from .declarative_model_base import BaseModel
 
 Base = BaseModel

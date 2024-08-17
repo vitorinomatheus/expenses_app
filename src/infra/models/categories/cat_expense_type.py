@@ -1,4 +1,5 @@
-from categories_base import CategoriesBase 
+from .categories_base import CategoriesBase 
+from ...database import Base
 
-class CatExpenseType(CategoriesBase):
+class CatExpenseType(CategoriesBase, Base):
     __tablename__ = "CategoryExpenseType"

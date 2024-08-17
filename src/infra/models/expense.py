@@ -1,8 +1,8 @@
-from .. import database
+from ..database import Base
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import ForeignKey
 
-class Expense(database.Base):
+class Expense(Base):
     __tablename__ = "Expense"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -13,3 +13,9 @@ class Expense(database.Base):
     cat_social = mapped_column(ForeignKey("CategorySocial.id"))
     cat_expense_feel = mapped_column(ForeignKey("CategoryExpenseFeel.id"))
     cat_budget_impact = mapped_column(ForeignKey("CategoryBudgetImpact.id"))
+
+    def graphql_schema() -> str:
+        return """
+        
+        """
+        pass

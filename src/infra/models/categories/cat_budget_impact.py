@@ -1,4 +1,5 @@
-from categories_base import CategoriesBase 
+from .categories_base import CategoriesBase 
+from ...database import Base
 
-class CatBudgetImpact(CategoriesBase):
-    __tablename__ = "CategoryBudgetImpact"
+class CatBudgetImpact(CategoriesBase, Base):
+        __tablename__ = "CategoryBudgetImpact"

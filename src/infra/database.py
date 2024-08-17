@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
-from ..main import app
+from sqlalchemy.orm import scoped_session, sessionmaker
+from flask import config
+from .declarative_model_base import BaseModel
 
-Base = declarative_base()
+Base = BaseModel
 
-database_uri = app.config.get('SQLALCHEMY_DATABASE_URI')
+database_uri = config.Config['SQLALCHEMY_DATABASE_URI']
 
-engine = create_engine(database_uri)
+# engine = create_engine(database_uri)

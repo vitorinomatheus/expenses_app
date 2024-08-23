@@ -19,6 +19,7 @@ models = [
 
 @app.route('/')
 def init():
-    return build_type_query(models)
+    print(type_defs)
+    return "<h3> Api working! </h3>"
 
 app.run(debug=True)

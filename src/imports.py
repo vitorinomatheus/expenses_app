@@ -13,3 +13,6 @@ from infra.models.categories.cat_expense_type import CatExpenseType
 from infra.models.categories.cat_social import CatSocial
 
 from api.graphql.graphql_tools import build_type_query
+from api.graphql.graphql_tools import convert_table_to_schema
+
+from api.graphql.schema_graphql import type_defs

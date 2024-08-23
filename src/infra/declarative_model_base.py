@@ -3,7 +3,7 @@ from sqlalchemy.orm import DeclarativeBase, class_mapper
 class BaseModel(DeclarativeBase):
         
     @classmethod
-    def get_schema(cls):
+    def get_schema(cls) -> list:
         column_info = []
 
         mapped = class_mapper(cls)
@@ -13,6 +13,6 @@ class BaseModel(DeclarativeBase):
             column_type = value.type
             column_nullable = value.nullable
 
-            column_info.append((column_name, column_type, column_nullable))
+            column_info.append((column_name, column_type.__visit_name__, column_nullable))
 
         return column_info

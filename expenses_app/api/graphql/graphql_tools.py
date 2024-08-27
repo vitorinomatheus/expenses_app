@@ -1,6 +1,7 @@
 from ...constants import SCHEMA_INDENT
+from ...infra.declarative_model_base import BaseModel
 
-def convert_model_to_graphql_schema(models: list) -> str:
+def convert_model_to_graphql_schema(models: list[BaseModel]) -> str:
     """
         Get schema from database model and generate its GraphQL schema. \n
         For each model, the function will return a GraphQL type with mapped columns
@@ -19,7 +20,7 @@ def convert_model_to_graphql_schema(models: list) -> str:
     return f"{"\n\n".join(schema_types)}"
 
 
-def build_type_query(models: list) -> str:
+def build_type_query(models: list[BaseModel]) -> str:
     """
         Build the base type 'Query' for GrapQL schema from a list of models.\n
         The function returns the type Query which has a field for querying a single value for 

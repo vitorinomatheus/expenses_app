@@ -1,8 +1,8 @@
 from flask import current_app
 
-@current_app.route("/graphql", methods=["POST"])
-def graphql_server():
-    return "HELLO"
+# @current_app.route("/graphql", methods=["POST"])
+# def graphql_server():
+#     return "HELLO"
 
 # @current_app.route('/')
 # def init():

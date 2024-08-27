@@ -18,3 +18,5 @@ from .api.graphql.graphql_tools import convert_model_to_graphql_schema
 from .api.graphql.graphql_schema import type_defs, schema
 
 from .infra.database import Database
+
+from .api.graphql.graphql_server import *

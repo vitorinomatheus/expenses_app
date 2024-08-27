@@ -10,7 +10,8 @@ dependencies = [
     "flask",
     "flask-cors",
     "flask-sqlalchemy",
-    "sqlalchemy"
+    "sqlalchemy",
+    "marshmallow_sqlalchemy"
 ]
 
 [build-system]

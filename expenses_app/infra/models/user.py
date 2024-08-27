@@ -1,5 +1,6 @@
 from ..database import Base
 from sqlalchemy.orm import Mapped, mapped_column
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 class User(Base):
     __tablename__ = "User"
@@ -9,3 +10,9 @@ class User(Base):
     password: Mapped[str]
     first_name: Mapped[str]
     last_name: Mapped[str]
+
+class UserJsonSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        include_relationship = True
+        load_instance = True

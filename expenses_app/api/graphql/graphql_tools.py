@@ -1,5 +1,6 @@
 from ...constants import SCHEMA_INDENT
 from ...infra.declarative_model_base import BaseModel
+from ariadne import ObjectType
 
 def convert_model_to_graphql_schema(models: list[BaseModel]) -> str:
     """
@@ -28,7 +29,7 @@ def build_type_query(models: list[BaseModel]) -> str:
     """
     models_fields = [
         f"""{SCHEMA_INDENT}{model.__name__.lower()}(id: ID!): {model.__name__}
-{SCHEMA_INDENT}{model.__name__.lower()}_list: [{model.__name__}!]"""
+{SCHEMA_INDENT}{model_to_list_name(model)}: [{model.__name__}!]"""
         for model in models
     ]
 
@@ -52,3 +53,6 @@ def dbtype_to_graphqltype(type: str) -> str:
         return "String"
     elif type == "boolean":
         return "Boolean"
+
+def model_to_list_name(model: BaseModel):
+    return f"{model.__name__.lower()}_list"

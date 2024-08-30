@@ -5,3 +5,5 @@ from ...infra.models.categories.cat_emotional import CatEmotional
 from ...infra.models.categories.cat_expense_feel import CatExpenseFeel
 from ...infra.models.categories.cat_expense_type import CatExpenseType
 from ...infra.models.categories.cat_social import CatSocial
+
+from ...infra.declarative_model_base import BaseModel

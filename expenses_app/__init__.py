@@ -10,10 +10,15 @@ def create_app():
     @app.teardown_appcontext
     def close_db_connection(exception):
         db = getattr(g, DB, None)
-        if db is not None and db is Database:
-            db.close_db()    
+        if db is not None:
+            db.remove()
+            g.pop(DB, None)   
 
-    server = Server(app)
+    data_repository = Repository()
+    data_service = DataService(data_repository)
+    graphql_resolvers = GraphQLResolvers(data_service)
+    graphql_schema = GraphQLSchema(graphql_resolvers).get_schema()
+    server = Server(app, graphql_schema)
 
     server.build_graphql_endpoint()
 

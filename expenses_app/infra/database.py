@@ -29,6 +29,6 @@ class Database:
         Base.metadata.create_all(bind=self.engine)
         db = self.get_db()
 
-    def query(self):
-        return self.session.query()
+    def query(self, model_class):
+        return self.session.query(model_class)
     

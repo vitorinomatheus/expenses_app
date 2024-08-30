@@ -15,6 +15,10 @@ class Expense(Base):
     cat_expense_feel: Mapped[int] = mapped_column(ForeignKey("CategoryExpenseFeel.id"))
     cat_budget_impact: Mapped[int] = mapped_column(ForeignKey("CategoryBudgetImpact.id"))
 
+    @classmethod
+    def get_json_schema(cls) -> SQLAlchemyAutoSchema:
+        return ExpenseJsonSchema()
+
 class ExpenseJsonSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Expense

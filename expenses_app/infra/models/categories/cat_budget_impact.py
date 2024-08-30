@@ -3,7 +3,11 @@ from ...database import Base
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 class CatBudgetImpact(CategoriesBase, Base):
-        __tablename__ = "CategoryBudgetImpact"
+    __tablename__ = "CategoryBudgetImpact"
+
+    @classmethod
+    def get_json_schema(cls) -> SQLAlchemyAutoSchema:
+            return CatBudgetImpactJsonSchema()
 
 class CatBudgetImpactJsonSchema(SQLAlchemyAutoSchema):
     class Meta:

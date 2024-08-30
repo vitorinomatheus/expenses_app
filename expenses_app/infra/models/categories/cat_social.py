@@ -5,6 +5,10 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 class CatSocial(CategoriesBase, Base):
     __tablename__ = "CategorySocial"
 
+    @classmethod
+    def get_json_schema(cls) -> SQLAlchemyAutoSchema:
+        return CatSocialJsonSchema()
+
 class CatSocialJsonSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = CatSocial

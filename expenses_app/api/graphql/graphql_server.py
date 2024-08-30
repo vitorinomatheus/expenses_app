@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, request
-from ..graphql.graphql_schema import schema
 from ariadne import graphql_sync
+from graphql import GraphQLSchema
 
 class Server:
-    def __init__(self, app: Flask):
+    def __init__(self, app: Flask, schema: GraphQLSchema):
         self.app = app
+        self.schema = schema
 
     def build_graphql_endpoint(self):
 
@@ -13,7 +14,7 @@ class Server:
             data = request.get_json()
 
             success, result = graphql_sync(
-                schema,
+                self.schema,
                 data,
                 context_value={"request": request},
                 debug=self.app.debug)

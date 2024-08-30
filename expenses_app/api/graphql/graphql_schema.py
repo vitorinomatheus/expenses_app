@@ -4,23 +4,19 @@ from .imports import *
 from flask import g
 from .graphql_resolvers import GraphQLResolvers
 
-models = [
-    User,
-    Expense,
-    CatBudgetImpact,
-    CatEmotional,
-    CatExpenseFeel,
-    CatExpenseType,
-    CatSocial
-]
+class GraphQLSchema:
 
-type_query_schema = build_type_query(models)
-models_schema = convert_model_to_graphql_schema(models)
+    def __init__(self, resolvers: GraphQLResolvers):
+        self.type_query_schema = build_type_query(models)
+        self.models_schema = convert_model_to_graphql_schema(models)
 
-type_defs = gql(f"""{type_query_schema}
+        self.type_defs = gql(f"""{self.type_query_schema}
 
-{models_schema}""")
+        {self.models_schema}""")
 
-resolvers = GraphQLResolvers(models)
+        self.resolvers = resolvers
 
-schema = make_executable_schema(type_defs, resolvers.query)
+        self.schema = make_executable_schema(self.type_defs, self.resolvers.query)
+    
+    def get_schema(self):
+        return self.schema

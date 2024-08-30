@@ -1,6 +1,5 @@
-from ...constants import SCHEMA_INDENT
+from ...constants import *
 from ...infra.declarative_model_base import BaseModel
-from ariadne import ObjectType
 
 def convert_model_to_graphql_schema(models: list[BaseModel]) -> str:
     """
@@ -44,7 +43,6 @@ def dbtype_to_graphqltype(type: str) -> str:
         Convert the description of column's type generated from 
         database model's to GraphQL type's description pattern
     """
-
     if type == "integer":
         return "Int"
     elif type == "float":
@@ -55,4 +53,4 @@ def dbtype_to_graphqltype(type: str) -> str:
         return "Boolean"
 
 def model_to_list_name(model: BaseModel):
-    return f"{model.__name__.lower()}_list"
+    return f"{model.__name__.lower()}{LIST_SCHEMA_SUFFIX}"

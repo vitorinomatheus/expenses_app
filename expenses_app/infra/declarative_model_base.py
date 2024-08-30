@@ -1,4 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase, class_mapper
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from abc import ABC, abstractmethod
 
 class BaseModelColumnSchema:
     def __init__(self, name: str, type: str, nullable: bool):
@@ -7,7 +9,11 @@ class BaseModelColumnSchema:
         self.nullable = nullable
 
 class BaseModel(DeclarativeBase):
-        
+
+    @abstractmethod
+    def get_json_schema(self) -> SQLAlchemyAutoSchema:
+        pass
+
     @classmethod
     def get_schema(cls) -> list[BaseModelColumnSchema]:
         """

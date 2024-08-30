@@ -11,6 +11,10 @@ class User(Base):
     first_name: Mapped[str]
     last_name: Mapped[str]
 
+    @classmethod
+    def get_json_schema(cls) -> SQLAlchemyAutoSchema:
+        return UserJsonSchema()
+
 class UserJsonSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User

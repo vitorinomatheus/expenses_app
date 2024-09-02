@@ -19,10 +19,9 @@ def convert_model_to_graphql_schema(models: list[BaseModel]) -> str:
     
     return f"{"\n\n".join(schema_types)}"
 
-
 def build_type_query(models: list[BaseModel]) -> str:
     """
-        Build the base type 'Query' for GrapQL schema from a list of models.\n
+        Build the base type 'Query' for GraphQL schema from a list of models.\n
         The function returns the type Query which has a field for querying a single value for 
         each model as well as for querying a list of each model 
     """
@@ -37,6 +36,39 @@ def build_type_query(models: list[BaseModel]) -> str:
     
     return type_query
 
+def convert_model_to_graphql_input(models: list[BaseModel]) -> str:
+    """
+        Build GraphQL input type for each model
+    """
+    inputs = []
+
+    for model in models:        
+        input_fields = [
+            f"{SCHEMA_INDENT}{column.name}: {dbtype_to_graphqltype(column.type)}\n"
+            for column in model.get_schema()
+        ]
+
+        input = f"input {model_to_input(model)} {{{"\n".join(input_fields)}}}"
+        inputs.append(input)
+    
+    return f"{"\n\n".join(inputs)}"
+
+def build_type_mutation(models: list[BaseModel]) -> str:
+    """
+        Build the 'Mutation' type for GraphQL write operations
+        The funcion returs the type Mutation which has a field for saving 
+        as well as deleting each model
+    """
+    mutation_fields = [
+        f"""{SCHEMA_INDENT}{model_to_save_field(model)}(id: ID, input: {model_to_input(model)}): {model.__name__}
+{SCHEMA_INDENT}{model_to_delete_field(model)}(id: ID!): Boolean!"""
+        for model in models
+    ]
+
+    type_mutation = f"""type Mutation {{
+{"\n".join(mutation_fields)} \n}}\n"""
+    
+    return type_mutation
 
 def dbtype_to_graphqltype(type: str) -> str:
     """
@@ -52,5 +84,14 @@ def dbtype_to_graphqltype(type: str) -> str:
     elif type == "boolean":
         return "Boolean"
 
-def model_to_list_name(model: BaseModel):
+def model_to_list_name(model: BaseModel) -> str:
     return f"{model.__name__.lower()}{LIST_SCHEMA_SUFFIX}"
+
+def model_to_save_field(model: BaseModel) -> str:
+    return f"{MUTATION_SAVE_FIELD_PREFIX}{model.__name__}"
+
+def model_to_delete_field(model: BaseModel) -> str:
+    return f"{MUTATION_DELETE_FIELD_PREFIX}{model.__name__}"
+
+def model_to_input(model: BaseModel) -> str:
+    return f"Save{model.__name__}Input"

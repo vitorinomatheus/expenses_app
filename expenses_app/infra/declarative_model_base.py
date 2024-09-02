@@ -15,6 +15,10 @@ class BaseModel(DeclarativeBase):
         pass
 
     @classmethod
+    def get_class_map(cls):
+        return class_mapper(cls)
+
+    @classmethod
     def get_schema(cls) -> list[BaseModelColumnSchema]:
         """
         Generate list with information from database model columns.\n 
@@ -22,7 +26,7 @@ class BaseModel(DeclarativeBase):
         """
         column_info = []
 
-        mapped = class_mapper(cls)
+        mapped = cls.get_class_map()
 
         for value in mapped.columns:
             column = BaseModelColumnSchema(value.name, value.type.__visit_name__, value.nullable)

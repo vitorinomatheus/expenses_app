@@ -28,7 +28,3 @@ class Database:
     def init_db(self):
         Base.metadata.create_all(bind=self.engine)
         db = self.get_db()
-
-    def query(self, model_class):
-        return self.session.query(model_class)
-    

@@ -1,4 +1,5 @@
-from .domain_imports import *
+from ..domain_imports import Repository, BaseModel, Expense
+from .expense_analysis_service import ExpenseAnalysisService
 
 class DataService:
     def __init__(self, repository: Repository):
@@ -20,4 +21,5 @@ class DataService:
             return self.repository.save_entity(model_class)
     
     def process_expense_analysis(self, expense: Expense):
-        pass
+        data_analysis_service = ExpenseAnalysisService()
+        return data_analysis_service.process_expense(expense)

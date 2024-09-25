@@ -1,6 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase, class_mapper
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 class BaseModelColumnSchema:
     def __init__(self, name: str, type: str, nullable: bool):

@@ -11,6 +11,16 @@ class Repository:
         json = model_class.get_json_schema() 
         response_list = [json.dump(d) for d in data]
         return response_list
+    
+    def get_filtered_list(self, model_class: BaseModel, filter_prop: str, filter_value):
+        db = self.get_db()
+
+        data = db.session.query(model_class).filter_by(filter_prop == filter_value)
+
+        json = model_class.get_json_schema() 
+        response_list = [json.dump(d) for d in data]
+
+        return response_list
         
     def get_entity(self, model_class: BaseModel, id):
         db = self.get_db()

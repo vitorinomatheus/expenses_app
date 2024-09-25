@@ -2,6 +2,7 @@ from ..database import Base
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import ForeignKey
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from datetime import datetime
 
 class Expense(Base):
     __tablename__ = "Expense"
@@ -14,6 +15,9 @@ class Expense(Base):
     cat_social: Mapped[int] = mapped_column(ForeignKey("CategorySocial.id"))
     cat_expense_feel: Mapped[int] = mapped_column(ForeignKey("CategoryExpenseFeel.id"))
     cat_budget_impact: Mapped[int] = mapped_column(ForeignKey("CategoryBudgetImpact.id"))
+    date: Mapped[datetime]
+    day_of_week: Mapped[int]
+    month_week: Mapped[int]
 
     @classmethod
     def get_json_schema(cls) -> SQLAlchemyAutoSchema:

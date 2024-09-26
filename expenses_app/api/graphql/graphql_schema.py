@@ -18,11 +18,13 @@ class GraphQLSchema:
 
         {self.mutation}
 
-        {self.input_types}""")
+        {self.input_types}
+
+        scalar Datetime""")
 
         self.resolvers = resolvers
 
-        self.schema = make_executable_schema(self.type_defs, self.resolvers.query, self.resolvers.mutation)
+        self.schema = make_executable_schema(self.type_defs, self.resolvers.query, self.resolvers.datetime_scalar, self.resolvers.mutation)
     
     def get_schema(self):
         return self.schema

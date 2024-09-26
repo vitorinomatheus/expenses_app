@@ -6,3 +6,6 @@ from ..infra.models.data_analysis.user_avr_expense_type import UserAvrExpenseTyp
 from ..infra.models.data_analysis.user_data_avr_emotional import UserAvrExpenseEmotional
 from ..infra.models.data_analysis.user_data_avr_social import UserAvrSocial
 from ..infra.models.data_analysis.user_data_avr_time_period import UserAvrTimePeriod
+from ..infra.models.data_analysis.user_relation_emotional_period import UserRelationEmotionalPeriod
+from ..infra.models.data_analysis.user_relation_emotional_social import UserRelationEmotionalSocial
+from ..infra.models.data_analysis.user_relation_social_period import UserRelationSocialPeriod

@@ -83,6 +83,8 @@ def dbtype_to_graphqltype(type: str) -> str:
         return "String"
     elif type == "boolean":
         return "Boolean"
+    elif type == "datetime":
+        return "Datetime"
 
 def model_to_list_name(model: BaseModel) -> str:
     return f"{model.__name__.lower()}{LIST_SCHEMA_SUFFIX}"

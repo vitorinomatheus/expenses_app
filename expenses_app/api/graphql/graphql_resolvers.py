@@ -1,12 +1,16 @@
-from ariadne import ObjectType, MutationType
+from ariadne import ObjectType, MutationType, ScalarType
 from . imports import *
 from .graphql_tools import *
 from graphql import GraphQLResolveInfo
+from datetime import datetime
 
 class GraphQLResolvers:
     def __init__(self, data_service: DataService):
         self.query = ObjectType("Query")
         self.mutation = MutationType()
+        self.datetime_scalar = ScalarType("Datetime")
+        self.datetime_scalar.set_serializer(lambda value: value.isoformat())
+        self.datetime_scalar.set_value_parser(lambda value: datetime.fromisoformat(value))
         self.set_base_resolvers()
         self.data_service = data_service
         self.mapped_models = self.map_types()

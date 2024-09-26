@@ -1,7 +1,19 @@
-from ..domain_imports import Expense, Repository, UserAvrSocial, UserAvrExpenseFeel, UserAvrExpenseType, UserAvrExpenseEmotional, UserAvrTimePeriod
+from ..domain_imports import (
+    Expense,
+    Repository,
+    UserAvrSocial,
+    UserAvrExpenseFeel,
+    UserAvrExpenseType,
+    UserAvrExpenseEmotional,
+    UserAvrTimePeriod,
+    UserRelationSocialPeriod,
+    UserRelationEmotionalPeriod,
+    UserRelationEmotionalSocial
+)
 from collections import defaultdict
-import calendar
 from datetime import datetime
+from itertools import groupby
+from operator import attrgetter
 
 class ExpenseAnalysisService:
     def __init__(self, repository: Repository):
@@ -9,7 +21,11 @@ class ExpenseAnalysisService:
 
     def process_expense(self, expense: Expense):
         self.save_expense(expense)
-        self.calc_average_per_category(expense)
+
+        user_id = expense.user_id  
+        user_expenses = self.repository.get_filtered_list(expense, 'user_id', user_id)
+
+        self.calc_average_per_category(user_expenses)
         self.calc_relations(expense)
 
     def save_expense(self, expense: Expense):
@@ -18,10 +34,7 @@ class ExpenseAnalysisService:
 
         return self.repository.save_entity(expense)
 
-    def calc_average_per_category(self, expense: Expense):
-        user_id = expense.user_id
-        user_expenses = self.repository.get_filtered_list(expense, 'user_id', user_id)         
-
+    def calc_average_per_category(self, user_expenses: list[Expense], user_id: int):               
         self.calc_average_emotional(user_expenses, user_id)
         self.calc_average_expense_feel(user_expenses, user_id)
         self.calc_average_expense_type(user_expenses, user_id)
@@ -45,7 +58,7 @@ class ExpenseAnalysisService:
 
         for cat, avr in new_avrs.items():
             new_avr = UserAvrExpenseType(
-                expense_feel = cat,
+                expense_type = cat,
                 user_id = user_id,
                 value = avr
             )
@@ -57,7 +70,7 @@ class ExpenseAnalysisService:
 
         for cat, avr in new_avrs.items():
             new_avr = UserAvrExpenseEmotional(
-                expense_feel = cat,
+                emotion_type = cat,
                 user_id = user_id,
                 value = avr
             )
@@ -69,7 +82,7 @@ class ExpenseAnalysisService:
         
         for cat, avr in new_avrs.items():
             new_avr = UserAvrSocial(
-                expense_feel = cat,
+                social_type = cat,
                 user_id = user_id,
                 value = avr
             )
@@ -134,20 +147,73 @@ class ExpenseAnalysisService:
 
                 self.repository.save_entity(time_avr)
 
+    def calc_relations(self, user_expenses: list[Expense], main_cat: str, related_cat: str) -> dict:
+        result = {}
         
+        if not user_expenses:
+            return result
+        
+        relations = defaultdict(lambda: {'main_cat': 0, 'relate_to': 0})
+        sorted_list = sorted(user_expenses, key=attrgetter(main_cat))
+
+        for main_cat_value, cat_group in groupby(sorted_list, key=attrgetter(main_cat)):
+            for expense in cat_group:
+                related_cat_value = getattr(expense, related_cat)
+                amount = expense.value
+                
+                relations[main_cat_value][related_cat_value]['total'] += amount
+                relations[main_cat_value][related_cat_value]['count'] += 1
+        
+        for main_cat_value, related_cat_value in relations.items():
+            result[main_cat_value] = {}
+            for related_cat, relation_value in related_cat_value.items():
+                if relation_value['count'] > 0:
+                    result[main_cat_value][related_cat] = relation_value['total'] / relation_value['count']
+        
+        return result
+
+    def calc_relation_emotional_social(self, user_expenses: list[Expense], user_id: int):
+        new_avrs: dict = self.calc_relations(user_expenses, 'cat_social', 'cat_emotional')
+        
+        for main_cat_value, related_cats in new_avrs.items():
+            for related_cat, avr in related_cats.items():
+                new_avr = UserRelationEmotionalSocial(
+                    social_type=main_cat_value,
+                    emotional_type=related_cat,
+                    user_id=user_id,
+                    value=avr
+                )
+
+            self.repository.save_entity(new_avr) 
 
 
-    def calc_relations(self, expense: Expense):
-        pass
+    def calc_relation_emotional_period(self, user_expenses: list[Expense], user_id: int):
+        new_avrs: dict = self.calc_relations(user_expenses, 'cat_emotional', 'month_week')
+        
+        for main_cat_value, related_cats in new_avrs.items():
+            for related_cat, avr in related_cats.items():
+                new_avr = UserRelationEmotionalPeriod(
+                    emotional_type=main_cat_value,
+                    month_week=related_cat,
+                    user_id=user_id,
+                    value=avr
+                )
 
-    def calc_relation_emotional_social():
-        pass
+            self.repository.save_entity(new_avr) 
 
-    def calc_relation_emotional_period():
-        pass
+    def calc_relation_social_period(self, user_expenses: list[Expense], user_id: int):
+        new_avrs: dict = self.calc_relations(user_expenses, 'cat_social', 'month_week')
+        
+        for main_cat_value, related_cats in new_avrs.items():
+            for related_cat, avr in related_cats.items():
+                new_avr = UserRelationSocialPeriod(
+                    event_type=main_cat_value,
+                    month_week=related_cat,
+                    user_id=user_id,
+                    value=avr
+                )
 
-    def calc_relation_social_period():
-        pass
+            self.repository.save_entity(new_avr) 
 
     def get_month_week(date: datetime) -> int:
         first_day_of_month = date.replace(day=1)

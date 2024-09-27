@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import ForeignKey
 from typing import Optional
+from ...database import Base
 
-class UserAvrExpenseType:
+class UserAvrExpenseType(Base):
     __tablename__ = "user_avr_expense_type"
 
     id: Mapped[int] = mapped_column(primary_key=True)

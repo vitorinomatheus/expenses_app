@@ -10,6 +10,8 @@ class BaseModelColumnSchema:
 
 class BaseModel(DeclarativeBase):
 
+    error: str
+
     @abstractmethod
     def get_json_schema(self) -> SQLAlchemyAutoSchema:
         pass

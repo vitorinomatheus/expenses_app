@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import ForeignKey
 from typing import Optional
+from ...database import Base
 
-class UserRelationEmotionalPeriod:
+class UserRelationEmotionalPeriod(Base):
     __tablename__ = "user_relation_emotional_period"
         
     id: Mapped[int] = mapped_column(primary_key=True)

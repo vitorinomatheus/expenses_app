@@ -15,13 +15,25 @@ class DataService:
         return self.repository.delete_entity(model, id)
     
     def save_entity(self, model: BaseModel):
-        if model is Expense:
+        if isinstance(model, Expense):
             return self.process_expense_analysis(model)
-        elif model is User:
-            model.password = self.encrypt_user_password(model)
+        elif isinstance(model, User):
+            model = self.save_user(model)
+            if model.error:
+                return model
 
         return self.repository.save_entity(model)
+
+    def save_user(self, user: User):
+        validated_user = self.validate_user_register(user)
+
+        if validated_user.error:
+            return validated_user
         
+        user.password = self.encrypt_user_password(user)
+        
+        return user
+
     def encrypt_user_password(self, user: User) -> str:
         try:
             password = getattr(user, 'password', None)
@@ -35,3 +47,11 @@ class DataService:
     def process_expense_analysis(self, expense: Expense) -> Expense:
         data_analysis_service = ExpenseAnalysisService()
         return data_analysis_service.process_expense(expense)
+    
+    def validate_user_register(self, user: User):
+        repeated_user = self.repository.get_user_by_username(user.email)
+
+        if not user.id and repeated_user:
+            user.error = "Email já cadastrado"
+        
+        return user

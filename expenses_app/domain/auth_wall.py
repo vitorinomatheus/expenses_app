@@ -2,7 +2,6 @@ from flask import current_app
 import jwt
 from jwt.exceptions import PyJWTError
 from typing import Callable
-from .domain_imports import BaseModel
 
 class AuthWall:
 
@@ -25,17 +24,15 @@ class AuthWall:
             payload = self.validate_token(token)
             request_user_id = kwargs.get('id')
 
-
             if request_user_id is None:
                 if hasattr(obj_type, 'user_id'):
                     request_user_id = getattr(obj_type, 'user_id')
                 elif hasattr(obj_type, 'id'):
                     request_user_id = getattr(obj_type, 'id')
 
-            if request_user_id is not None and str(request_user_id) != str(payload['user_id']):
+
+            if request_user_id and str(request_user_id) != str(payload['user_id']):
                 raise Exception("Acesso não autorizado: tentativa de acessar dados de outro usuário")
-            
-            positional_args = list(kwargs.values())
             
             return method(**kwargs)
         

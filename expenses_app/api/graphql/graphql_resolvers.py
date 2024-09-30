@@ -32,14 +32,14 @@ class GraphQLResolvers:
         return self.auth_wall.authorize(auth_token, self.data_service.get_list, model=type)
 
     def default_save_resolver(self, _, info: GraphQLResolveInfo, **kwargs):
-        id = kwargs['id']
-        data = kwargs['input']
+        id = kwargs.get('id')
+        data = kwargs.get('input')
         type = self.get_field_type(info)
         auth_token = info.context['request'].authorization.token
-        if id:
-            type.id = id
         for key, value in data.items():
             setattr(type, key, value)
+        if id:
+            type.id = id
 
         return self.auth_wall.authorize(auth_token, self.data_service.save_entity, model=type)
 
@@ -82,4 +82,5 @@ class GraphQLResolvers:
         if MUTATION_SAVE_FIELD_PREFIX in name:
             name = name.replace(MUTATION_SAVE_FIELD_PREFIX, "").lower()
             
-        return self.mapped_models.get(name)
+        model = self.mapped_models.get(name)
+        return model()   

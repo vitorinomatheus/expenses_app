@@ -47,7 +47,9 @@ class Repository:
             data = db.session.query(model_class).filter_by(id=id).first()
             json = model_class.get_json_schema() 
             if data != None:
-                return json.dump(data)
+                return_data = json.dump(data)
+
+                return return_data
             else:
                 raise Exception('Not Found')
         except SQLAlchemyError as e:
@@ -62,10 +64,10 @@ class Repository:
     def save_entity(self, model_class: BaseModel):
         try:
             db = self.get_db()
-            if (model_class.id == None):
-                db.session.add(model_class)
-            else:
+            if isinstance(model_class.id, str) and model_class.id:
                 self.update_entity(model_class, db)
+            else:
+                db.session.add(model_class)
             db.session.commit()
             return model_class
         except SQLAlchemyError as e:

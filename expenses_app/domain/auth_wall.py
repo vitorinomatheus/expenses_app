@@ -33,7 +33,7 @@ class AuthWall:
                     request_user_id = getattr(obj_type, 'id')
 
             if request_user_id is not None and str(request_user_id) != str(payload['user_id']):
-                raise Exception("Acesso não autorizado: user_id não corresponde ao token")
+                raise Exception("Acesso não autorizado: tentativa de acessar dados de outro usuário")
             
             positional_args = list(kwargs.values())
             

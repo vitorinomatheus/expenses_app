@@ -18,40 +18,77 @@ class GraphQLResolvers:
 
     def default_entity_query_resolver(self, _, info: GraphQLResolveInfo, id):
         type = self.get_field_type(info)
-        auth_token = info.context['request'].authorization.token
-        return self.auth_wall.authorize(
-            token=auth_token,
-            method=self.data_service.get_entity,
-            model=type,
-            id=id
-        )
+
+        authorization = info.context.get('request').authorization
+
+        if authorization:
+            auth_token = authorization.token
+
+            return self.auth_wall.authorize(
+                token=auth_token,
+                method=self.data_service.get_entity,
+                model=type,
+                id=id
+            )
+    
+        type.error = "Requisição não validada: realize o login"
+        return type
 
     def default_list_query_resolver(self, _, info):
         type = self.get_field_type(info)
-        auth_token = info.context['request'].authorization.token
-        return self.auth_wall.authorize(auth_token, self.data_service.get_list, model=type)
+        authorization = info.context.get('request').authorization
+
+        if authorization:
+            auth_token = authorization.token
+
+            return self.auth_wall.authorize(auth_token, self.data_service.get_list, model=type)
+        
+        type.error = "Requisição não validada: realize o login"
+        return type
 
     def default_save_resolver(self, _, info: GraphQLResolveInfo, **kwargs):
         id = kwargs.get('id')
         data = kwargs.get('input')
         type = self.get_field_type(info)
-        auth_token = info.context['request'].authorization.token
+
+        authorization = info.context.get('request').authorization
+
         for key, value in data.items():
             setattr(type, key, value)
+
         if id:
             type.id = id
 
-        return self.auth_wall.authorize(auth_token, self.data_service.save_entity, model=type)
+        if authorization:
+            auth_token = authorization.token
+
+            return self.auth_wall.authorize(auth_token, self.data_service.save_entity, model=type)
+        
+        if isinstance(type, User) and not id:
+            return self.data_service.save_entity(type)
+        
+        type.error = "Requisição não validada: realize o login"
+        return type
 
     def default_delete_resolver(self, _, info: GraphQLResolveInfo, id):
         type = self.get_field_type(info)
-        auth_token = info.context['request'].authorization.token
-        return self.auth_wall.authorize(
-            auth_token, 
-            self.data_service.delete_entity, 
-            model=type, 
-            id=id
-        )
+        authorization = info.context.get('request').authorization
+
+        if id:
+            type.id = id
+
+        if authorization:
+            auth_token = authorization.token
+
+            return self.auth_wall.authorize(
+                auth_token, 
+                self.data_service.delete_entity, 
+                model=type, 
+                id=id
+            )
+        
+        type.error = "Requisição não validada: realize o login"
+        return type
     
     def set_base_resolvers(self):
         for model in register_models:

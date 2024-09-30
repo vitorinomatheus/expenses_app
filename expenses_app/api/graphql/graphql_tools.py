@@ -66,7 +66,7 @@ def build_type_mutation(models: list[BaseModel], additional_mutations: list[str]
     """
     mutation_fields = [
         f"""{SCHEMA_INDENT}{model_to_save_field(model)}(id: ID, input: {model_to_input(model)}): {model.__name__}
-{SCHEMA_INDENT}{model_to_delete_field(model)}(id: ID!): Boolean!"""
+{SCHEMA_INDENT}{model_to_delete_field(model)}(id: ID!): {model.__name__}!"""
         for model in models
     ]
 

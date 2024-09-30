@@ -19,7 +19,7 @@ class DataService:
             return self.process_expense_analysis(model)
         elif isinstance(model, User):
             model = self.save_user(model)
-            if model.error:
+            if hasattr(model, 'error') and model.error:
                 return model
 
         return self.repository.save_entity(model)
@@ -27,7 +27,7 @@ class DataService:
     def save_user(self, user: User):
         validated_user = self.validate_user_register(user)
 
-        if validated_user.error:
+        if hasattr(validated_user, 'error') and validated_user.error :
             return validated_user
         
         user.password = self.encrypt_user_password(user)

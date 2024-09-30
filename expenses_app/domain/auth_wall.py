@@ -30,7 +30,6 @@ class AuthWall:
                 elif hasattr(obj_type, 'id'):
                     request_user_id = getattr(obj_type, 'id')
 
-
             if request_user_id and str(request_user_id) != str(payload['user_id']):
                 raise Exception("Acesso não autorizado: tentativa de acessar dados de outro usuário")
             

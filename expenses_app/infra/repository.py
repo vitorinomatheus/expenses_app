@@ -11,7 +11,7 @@ class Repository:
     def get_list(self, model_class: BaseModel):
         try:
             db = self.get_db()
-            data = db.session.query(model_class).all()
+            data = db.session.query(type(model_class)).all()
             json = model_class.get_json_schema()
             response_list = [json.dump(d) for d in data]
             return response_list
@@ -27,7 +27,7 @@ class Repository:
     def get_filtered_list(self, model_class: BaseModel, filter_prop: str, filter_value):
         try:
             db = self.get_db()
-            data = db.session.query(model_class).filter_by(filter_prop == filter_value)
+            data = db.session.query(type(model_class)).filter_by(filter_prop == filter_value)
             json = model_class.get_json_schema() 
             response_list = [json.dump(d) for d in data]
             return response_list
@@ -44,7 +44,7 @@ class Repository:
     def get_entity(self, model_class: BaseModel, id):
         try:
             db = self.get_db()
-            data = db.session.query(model_class).filter_by(id=id).first()
+            data = db.session.query(type(model_class)).filter_by(id=id).first()
             json = model_class.get_json_schema() 
             if data != None:
                 return_data = json.dump(data)
@@ -78,7 +78,7 @@ class Repository:
             return model_class
     
     def update_entity(self, model_class: BaseModel, db: Database) -> BaseModel:
-        entity = db.session.query(model_class).filter_by(id=model_class.id).first()
+        entity = db.session.query(type(model_class)).filter_by(id=model_class.id).first()
         map = model_class.get_class_map().columns
         columns = [c.name for c in map]
         
@@ -93,9 +93,10 @@ class Repository:
     def delete_entity(self, model_class: BaseModel, id: int):
         try:
             db = self.get_db()
-            entity = self.get_entity(model_class, id)
+            entity = db.session.query(type(model_class)).filter_by(id=id).first()
             db.session.delete(entity)
-            return True
+            db.session.commit()
+            return entity
         except SQLAlchemyError as e:
             model_class.error = f"Erro ao obter a lista: {str(e)}"
             return model_class

@@ -4,7 +4,7 @@ from ..domain_imports import (
     UserAvrSocial,
     UserAvrExpenseFeel,
     UserAvrExpenseType,
-    UserAvrExpenseEmotional,
+    UserAvrEmotional,
     UserAvrTimePeriod,
     UserRelationSocialPeriod,
     UserRelationEmotionalPeriod,
@@ -19,14 +19,15 @@ class ExpenseAnalysisService:
     def __init__(self, repository: Repository):
         self.repository = repository
 
-    def process_expense(self, expense: Expense):
-        self.save_expense(expense)
+    def process_expense(self, expense: Expense) -> Expense:
+        saved_expense = self.save_expense(expense)
 
         user_id = expense.user_id  
         user_expenses = self.repository.get_filtered_list(expense, 'user_id', user_id)
 
         self.calc_average_per_category(user_expenses)
         self.calc_relations(expense)
+        return saved_expense
 
     def save_expense(self, expense: Expense):
         expense.day_of_week = expense.date.weekday()
@@ -69,7 +70,7 @@ class ExpenseAnalysisService:
         new_avrs: dict = self.calc_averages(user_expenses, 'cat_emotional')
 
         for cat, avr in new_avrs.items():
-            new_avr = UserAvrExpenseEmotional(
+            new_avr = UserAvrEmotional(
                 emotion_type = cat,
                 user_id = user_id,
                 value = avr

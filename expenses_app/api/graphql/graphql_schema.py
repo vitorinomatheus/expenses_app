@@ -7,10 +7,11 @@ from .graphql_resolvers import GraphQLResolvers
 class GraphQLSchema:
 
     def __init__(self, resolvers: GraphQLResolvers):
-        self.type_query_schema = build_type_query(models)
-        self.models_schema = convert_model_to_graphql_schema(models)
-        self.mutation = build_type_mutation(models)
-        self.input_types = convert_model_to_graphql_input(models)
+        self.type_query_schema = build_type_query(register_models + analysis_models)
+        self.models_schema = convert_db_model_to_graphql_schema(register_models + analysis_models)
+        self.additional_mutations = [LoginInput.get_mutation()]
+        self.mutation = build_type_mutation(register_models, additional_mutations=self.additional_mutations)
+        self.input_types = convert_model_to_graphql_input(register_models)
 
         self.type_defs = gql(f"""{self.type_query_schema}
 
@@ -19,6 +20,17 @@ class GraphQLSchema:
         {self.mutation}
 
         {self.input_types}
+
+        input LoginInput {{
+            username: String!
+            password: String!
+        }}
+
+        type LoginResponse {{
+            token: String
+            error: String
+            user: User
+        }}
 
         scalar Datetime""")
 

@@ -11,7 +11,11 @@ dependencies = [
     "flask-cors",
     "flask-sqlalchemy",
     "sqlalchemy",
-    "marshmallow_sqlalchemy"
+    "sqlalchemy-orm",
+    "marshmallow_sqlalchemy",
+    "cryptography",
+    "ariadne",
+    "pyjwt"
 ]
 
 [build-system]

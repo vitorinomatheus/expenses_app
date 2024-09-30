@@ -10,3 +10,5 @@ class UserAvrSocial(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=True)
     social_type: Mapped[int] = mapped_column(ForeignKey("CategorySocial.id"), nullable=True)
     value: Mapped[float]
+
+    ignore_list = True

@@ -16,7 +16,8 @@ def create_app():
 
     data_repository = Repository()
     data_service = DataService(data_repository)
-    graphql_resolvers = GraphQLResolvers(data_service)
+    auth_wall = AuthWall()
+    graphql_resolvers = GraphQLResolvers(data_service, auth_wall)
     graphql_schema = GraphQLSchema(graphql_resolvers).get_schema()
     server = Server(app, graphql_schema)
 

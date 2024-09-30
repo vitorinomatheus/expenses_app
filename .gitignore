@@ -1,4 +1,6 @@
 .venv/
 __pycache__/
 
+dist/
+
 app_config.py

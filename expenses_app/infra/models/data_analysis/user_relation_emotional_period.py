@@ -11,3 +11,5 @@ class UserRelationEmotionalPeriod(Base):
     month_week: Mapped[Optional[int]]
     emotional_type: Mapped[int] = mapped_column(ForeignKey("CategoryEmotional.id"), nullable=True)
     value: Mapped[float]
+
+    ignore_list = True

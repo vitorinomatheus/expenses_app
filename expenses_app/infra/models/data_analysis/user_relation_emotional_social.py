@@ -11,3 +11,5 @@ class UserRelationEmotionalSocial(Base):
     social_type: Mapped[int] = mapped_column(ForeignKey("CategorySocial.id"), nullable=True)
     emotional_type: Mapped[int] = mapped_column(ForeignKey("CategoryEmotional.id"), nullable=True)
     value: Mapped[float]
+
+    ignore_list = True

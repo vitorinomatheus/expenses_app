@@ -11,3 +11,5 @@ class UserRelationSocialPeriod(Base):
     event_type: Mapped[int] = mapped_column(ForeignKey("CategorySocial.id"), nullable=True)
     month_week: Mapped[Optional[int]]
     value: Mapped[float]
+
+    ignore_list = True

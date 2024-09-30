@@ -11,3 +11,5 @@ class UserAvrTimePeriod(Base):
     month_week: Mapped[Optional[int]]
     week_day: Mapped[Optional[int]]
     value: Mapped[float]
+
+    ignore_list = True

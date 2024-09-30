@@ -10,3 +10,5 @@ class UserAvrExpenseFeel(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=True)
     expense_feel: Mapped[int] = mapped_column(ForeignKey("CategoryExpenseFeel.id"), nullable=True)
     value: Mapped[float]
+
+    ignore_list = True

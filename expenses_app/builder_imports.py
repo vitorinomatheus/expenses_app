@@ -8,7 +8,7 @@ from sqlalchemy.orm import scoped_session, Session
 
 
 from .api.graphql.graphql_tools import build_type_query
-from .api.graphql.graphql_tools import convert_model_to_graphql_schema
+from .api.graphql.graphql_tools import convert_db_model_to_graphql_schema
 from .api.graphql.graphql_schema import GraphQLSchema
 from .api.graphql.graphql_resolvers import GraphQLResolvers
 
@@ -21,3 +21,4 @@ from .api.graphql.graphql_server import Server
 from .constants import *
 
 from .domain.services.data_service import DataService
+from .domain.auth_wall import AuthWall

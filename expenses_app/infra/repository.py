@@ -2,6 +2,7 @@ from flask import g
 from .database import Database
 from ..constants import *
 from .declarative_model_base import BaseModel
+from .models.expense import Expense
 from sqlalchemy.exc import SQLAlchemyError
 from .models.user import User
 from sqlalchemy.orm.attributes import flag_modified, set_attribute
@@ -24,20 +25,17 @@ class Repository:
             json_error = model_class.get_json_schema().dump(model_class)
             return [json_error]
     
-    def get_filtered_list(self, model_class: BaseModel, filter_prop: str, filter_value):
+    def get_expense_by_user_id(self, expense: Expense, user_id):
         try:
             db = self.get_db()
-            data = db.session.query(type(model_class)).filter_by(filter_prop == filter_value)
-            json = model_class.get_json_schema() 
-            response_list = [json.dump(d) for d in data]
-            return response_list
+            return db.session.query(type(expense)).filter_by(user_id = user_id).all()
         except SQLAlchemyError as e:
-            model_class.error = f"Erro ao obter a lista: {str(e)}"
-            json_error = model_class.get_json_schema().dump(model_class)
+            expense.error = f"Erro ao obter a lista: {str(e)}"
+            json_error = expense.get_json_schema().dump(expense)
             return [json_error]
         except Exception as e:
-            model_class.error = f"Erro inesperado: {str(e)}"
-            json_error = model_class.get_json_schema().dump(model_class)
+            expense.error = f"Erro inesperado: {str(e)}"
+            json_error = expense.get_json_schema().dump(expense)
             return [json_error]
         
         

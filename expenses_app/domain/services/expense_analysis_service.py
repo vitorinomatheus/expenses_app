@@ -11,7 +11,7 @@ from ..domain_imports import (
     UserRelationEmotionalSocial
 )
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from itertools import groupby
 from operator import attrgetter
 
@@ -23,13 +23,14 @@ class ExpenseAnalysisService:
         saved_expense = self.save_expense(expense)
 
         user_id = expense.user_id  
-        user_expenses = self.repository.get_filtered_list(expense, 'user_id', user_id)
+        user_expenses = self.repository.get_expense_by_user_id(expense, user_id)
 
-        self.calc_average_per_category(user_expenses)
-        self.calc_relations(expense)
+        self.calc_average_per_category(user_expenses, user_id)
+        #self.calc_relations_per_category(user_expenses, user_id)
         return saved_expense
 
     def save_expense(self, expense: Expense):
+        expense.date = datetime.now(timezone.utc)
         expense.day_of_week = expense.date.weekday()
         expense.month_week = self.get_month_week(expense.date)
 
@@ -49,7 +50,7 @@ class ExpenseAnalysisService:
             new_avr = UserAvrExpenseFeel(
                 expense_feel = cat,
                 user_id = user_id,
-                value = avr
+                value = avr['value']
             )
 
             self.repository.save_entity(new_avr)       
@@ -61,7 +62,7 @@ class ExpenseAnalysisService:
             new_avr = UserAvrExpenseType(
                 expense_type = cat,
                 user_id = user_id,
-                value = avr
+                value = avr['value']
             )
 
             self.repository.save_entity(new_avr)  
@@ -73,7 +74,7 @@ class ExpenseAnalysisService:
             new_avr = UserAvrEmotional(
                 emotion_type = cat,
                 user_id = user_id,
-                value = avr
+                value = avr['value']
             )
 
             self.repository.save_entity(new_avr)   
@@ -85,12 +86,12 @@ class ExpenseAnalysisService:
             new_avr = UserAvrSocial(
                 social_type = cat,
                 user_id = user_id,
-                value = avr
+                value = avr['value']
             )
 
             self.repository.save_entity(new_avr)  
 
-    def calc_averages(user_expenses: list[Expense], category: str) -> dict:
+    def calc_averages(self, user_expenses: list[Expense], category: str) -> dict:
         if not user_expenses:
             return {}
         
@@ -172,6 +173,11 @@ class ExpenseAnalysisService:
                     result[main_cat_value][related_cat] = relation_value['total'] / relation_value['count']
         
         return result
+    
+    def calc_relations_per_category(self, user_expenses: list[Expense], user_id: int):
+        self.calc_relation_emotional_period(user_expenses, user_id)
+        self.calc_relation_emotional_social(user_expenses, user_id)
+        self.calc_relation_social_period(user_expenses, user_id)
 
     def calc_relation_emotional_social(self, user_expenses: list[Expense], user_id: int):
         new_avrs: dict = self.calc_relations(user_expenses, 'cat_social', 'cat_emotional')
@@ -186,7 +192,6 @@ class ExpenseAnalysisService:
                 )
 
             self.repository.save_entity(new_avr) 
-
 
     def calc_relation_emotional_period(self, user_expenses: list[Expense], user_id: int):
         new_avrs: dict = self.calc_relations(user_expenses, 'cat_emotional', 'month_week')
@@ -216,10 +221,10 @@ class ExpenseAnalysisService:
 
             self.repository.save_entity(new_avr) 
 
-    def get_month_week(date: datetime) -> int:
+    def get_month_week(self, date: datetime) -> int:
         first_day_of_month = date.replace(day=1)
         day_of_month = date.day
-        adjusted_day_of_month = day_of_month + first_day_of_month
+        adjusted_day_of_month = day_of_month + first_day_of_month.day
         week_of_month = (adjusted_day_of_month - 1) // 7 + 1
 
         return week_of_month

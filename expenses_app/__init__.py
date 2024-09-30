@@ -11,7 +11,6 @@ def create_app():
     def close_db_connection(exception):
         db = getattr(g, DB, None)
         if db is not None:
-            db.remove()
             g.pop(DB, None)   
 
     data_repository = Repository()

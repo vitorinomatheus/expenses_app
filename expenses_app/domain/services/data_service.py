@@ -45,7 +45,7 @@ class DataService:
             raise Exception(f"Erro ao salvar usuário: {str(e)}")
     
     def process_expense_analysis(self, expense: Expense) -> Expense:
-        data_analysis_service = ExpenseAnalysisService()
+        data_analysis_service = ExpenseAnalysisService(self.repository)
         return data_analysis_service.process_expense(expense)
     
     def validate_user_register(self, user: User):
